@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joke Tip Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Joke Tip Calculator</h1>
+        <p>Enter the details below to calculate your tip!</p>
+        <div class="question">
+            <label for="mealPrice">Price of the meal:</label>
+            <input type="number" id="mealPrice" placeholder="Enter meal price">
+        </div>
+        <div id="intermediateResult">
+            <p>Standard Tip Suggestions:</p>
+            <ul id="tipSuggestions">
+                <!-- Tip suggestions will be displayed here -->
+            </ul>
+        </div>
+        <div class="question">
+            <label>Does the suggested amount on your receipt match this calculation?</label><br>
+            <button id="matchYes">Yes</button>
+            <button id="matchNo">No</button>
+            <button id="matchNA">N/A</button>
+        </div>
+        <div class="question">
+            <label>Was the service good, fair, or poor?</label><br>
+            <button id="serviceGood">Good</button>
+            <button id="serviceFair">Fair</button>
+            <button id="servicePoor">Poor</button>
+        </div>
+        <div class="question">
+            <label>What is the suggested tip percentage on the receipt?</label>
+            <select id="suggestedTip">
+                <option value="N/A">N/A</option>
+                <option value="10">10%</option>
+                <option value="12">12%</option>
+                <option value="15">15%</option>
+                <option value="16">16%</option>
+                <option value="18">18%</option>
+                <option value="20">20%</option>
+                <option value="25">25%</option>
+            </select>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // State variables
+        let receiptMatch = null;
+        let serviceQuality = null;
+        let mealPrice = 0;
+
+        // Elements
+        const mealPriceInput = document.getElementById('mealPrice');
+        const matchYesButton = document.getElementById('matchYes');
+        const matchNoButton = document.getElementById('matchNo');
+        const matchNAButton = document.getElementById('matchNA');
+        const serviceGoodButton = document.getElementById('serviceGood');
+        const serviceFairButton = document.getElementById('serviceFair');
+        const servicePoorButton = document.getElementById('servicePoor');
+        const suggestedTipSelect = document.getElementById('suggestedTip');
+        const resultDiv = document.getElementById('result');
+        const intermediateResultDiv = document.getElementById('tipSuggestions');
+
+        // Function to display standard tip suggestions
+        function displayStandardTipSuggestions() {
+            const standardTips = [15, 16, 18, 20];
+            intermediateResultDiv.innerHTML = ''; // Clear existing suggestions
+
+            standardTips.forEach(tipPercentage => {
+                const tipAmount = mealPrice * (tipPercentage / 100);
+                const listItem = document.createElement('li');
+                listItem.textContent = `${tipPercentage}%: $${tipAmount.toFixed(2)}`;
+                intermediateResultDiv.appendChild(listItem);
+            });
+        }
+
+        // Function to calculate and display tip
+        function calculateAndDisplayTip() {
+            let tipPercentage = 15; // base tip percentage
+
+            // Adjust tip based on receipt match
+            if (receiptMatch === 'no') {
+                tipPercentage -= 5;
+            }
+
+            // Adjust tip based on service quality
+            if (serviceQuality === 'good') {
+                tipPercentage += 5;
+            } else if (serviceQuality === 'poor') {
+                tipPercentage -= 5;
+            }
+
+            // Adjust tip based on suggested tip
+            const selectedTip = suggestedTipSelect.value;
+            if (selectedTip !== 'N/A' && selectedTip !== 'other') {
+                const selectedTipValue = parseFloat(selectedTip);
+                if (selectedTipValue < 12) {
+                    tipPercentage += (12 - selectedTipValue);
+                } else if (selectedTipValue > 15) {
+                    tipPercentage -= (selectedTipValue - 15);
+                }
+            }
+
+            // Ensure the maximum tipPercentage does not exceed 25%
+            tipPercentage = Math.min(tipPercentage, 25);
+
+            let finalTipAmount = mealPrice * (tipPercentage / 100);
+
+            // Ensure a minimum tip amount of $0.01
+            if (finalTipAmount < 0.01) {
+                finalTipAmount = 0.01;
+                tipPercentage = 0; // Display 0% when the tip amount is forced to the minimum
+            }
+
+            resultDiv.innerHTML = `Your joke tip amount is: $${finalTipAmount.toFixed(2)} (${tipPercentage}%)`;
+        }
+
+        // Event Listeners
+        mealPriceInput.addEventListener('input', () => {
+            mealPrice = parseFloat(mealPriceInput.value) || 0;
+            calculateAndDisplayTip();
+        });
+
+        matchYesButton.addEventListener('click', () => { receiptMatch = 'yes'; calculateAndDisplayTip(); });
+        matchNoButton.addEventListener('click', () => { receiptMatch = 'no'; calculateAndDisplayTip(); });
+        matchNAButton.addEventListener('click', () => { receiptMatch = 'yes'; calculateAndDisplayTip(); });
+
+        serviceGoodButton.addEventListener('click', () => { serviceQuality = 'good'; calculateAndDisplayTip(); });
+        serviceFairButton.addEventListener('click', () => { serviceQuality = 'fair'; calculateAndDisplayTip(); });
+        servicePoorButton.addEventListener('click', () => { serviceQuality = 'poor'; calculateAndDisplayTip(); });
+
+        suggestedTipSelect.addEventListener('change', calculateAndDisplayTip);
+
+        // Update meal price input event listener
+        mealPriceInput.addEventListener('input', () => {
+            mealPrice = parseFloat(mealPriceInput.value) || 0;
+            displayStandardTipSuggestions();
+            calculateAndDisplayTip();
+        });
+
+        // Utility function to clear 'clicked' class from all buttons in a group
+        function clearClickedClass(buttonGroup) {
+            buttonGroup.forEach(button => button.classList.remove('clicked'));
+        }
+
+        const matchButtons = [matchYesButton, matchNoButton, matchNAButton];
+        const serviceButtons = [serviceGoodButton, serviceFairButton, servicePoorButton];
+
+        matchButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                clearClickedClass(matchButtons);
+                button.classList.add('clicked');
+            });
+        });
+
+        serviceButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                clearClickedClass(serviceButtons);
+                button.classList.add('clicked');
+            });
+        });
+
+    });
+
+</script>
+</body>
+
+</html>

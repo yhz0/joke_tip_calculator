@@ -1,0 +1,84 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+}
+
+label {
+    display: block; /* Makes label take the full width */
+    font-size: 1.2em; /* Larger font size for better readability */
+    color: #333; /* Darker color for better contrast */
+    margin-bottom: 5px; /* Spacing below each label */
+    font-weight: bold; /* Makes the text bolder */
+}
+
+.question {
+    margin-bottom: 20px; /* Adds more space between each question */
+}
+
+/* Additional styling for better UX */
+.question p {
+    margin-top: 0;
+    color: #555;
+    font-size: 1em;
+}
+
+input[type="number"] {
+    width: 90%;
+    padding: 15px; /* Increased padding for larger size */
+    margin: 10px 0;
+    border: 2px solid #007bff; /* Consistent with button style */
+    border-radius: 4px;
+    font-size: 1.1em; /* Larger font size for better readability */
+}
+
+button {
+    padding: 10px 15px;
+    border: 2px solid #007bff; /* Blue border */
+    border-radius: 4px;
+    background-color: transparent; /* No fill initially */
+    color: #007bff; /* Blue text */
+    margin-right: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button:focus, button.clicked {
+    background-color: #007bff; /* Blue background when selected */
+    color: white; /* White text when selected */
+}
+
+button:active {
+    background-color: #0056b3; /* Slightly darker blue for active state */
+    color: white;
+}
+
+
+#tipSuggestions li {
+    margin: 5px 0;
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
